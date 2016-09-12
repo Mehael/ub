@@ -1,0 +1,124 @@
+﻿<!DOCTYPE html> 
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+<style>
+div.center {
+   text-align: center;
+   margin: 5%;
+}
+body {
+  margin-top: 20px;
+  background-image: linear-gradient(90deg, #4F364C, #2f202d);
+}
+</style>
+</head>
+<body>
+<script>
+$(document).ready(function(){
+	//Загрузить таблицу предметов
+	$.getJSON( "https://global.api.pvp.net/api/lol/static-data/ru/v1.2/item?itemListData=all&api_key=faad7945-0d54-4715-add1-3ee909b5be7b", function( database ) {
+	  
+	  var clientVersion = database["version"];
+	  var items = [];
+	  var boots =[];
+	  
+	  $.each(database["data"], function( itemId, itemInfo ){  
+		//Запомним только итемы 3 уровня для SummonersRift, без ограничения на героя
+		if ((itemInfo["depth"] > 1)&&!("into" in itemInfo)&&(itemInfo["maps"]["11"] == true)&&!("requiredChampion" in itemInfo)&&(!("hideFromAll" in itemInfo)||(itemInfo["group"] == "JungleItems"))){
+			items.push(itemId);
+			//$(".names").append(itemInfo["name"] + '<br>');
+		} else {			
+			if (("group" in itemInfo)&&(itemInfo["group"].substring(0, 5) == "Boots")&&(itemInfo["depth"] == 2)){
+				boots.push(itemId);
+			}
+		}
+	});
+
+	//Будем запоминать группы, чтобы не вышло 2 ботинка или джангл итема
+	  var AlreadyUsedGroups = [];
+	  var ChosenItems = [];
+	  var tags = [];
+	  
+	  //Выберем рандомные предметы
+	  do {
+	  	var chosenItemId = items[Math.floor(Math.random()*items.length)];
+		var isGoodItem = false;
+		var tagsComp = true;
+		
+		if (ChosenItems.length == 0)
+			chosenItemId = boots[Math.floor(Math.random()*boots.length)];
+		
+		if (ChosenItems.indexOf(chosenItemId) == -1){
+		  if (!("group" in database["data"][chosenItemId])){
+			isGoodItem = true;
+		  }else{
+			var itemGroup = (database["data"][chosenItemId]["group"]);
+			if (AlreadyUsedGroups.indexOf(itemGroup) == -1) {
+			  isGoodItem = true;
+			  AlreadyUsedGroups.push(itemGroup);
+			}
+		  }
+		}
+		
+		if (isGoodItem){
+			ChosenItems.push(chosenItemId);
+		  $(".images").append('<img src="http://ddragon.leagueoflegends.com/cdn/'+ clientVersion + '/img/item/' + database["data"][chosenItemId]["image"]["full"] + '">');
+		  $(".names").append(database["data"][chosenItemId]["name"] + '<br>');
+
+			if ("tags" in database["data"][chosenItemId])
+			for (var i = 0; i < database["data"][chosenItemId]["tags"].length; i++) {
+				tags.push(database["data"][chosenItemId]["tags"][i]); 
+			}
+		  
+		}
+	  } while (ChosenItems.length < 7)
+	  
+	for (var i = 0; i < tags.length; i++) {
+		console.log(tags[i]);
+	}
+	  
+	  if (tags.indexOf("CriticalStrike") == -1){
+		$(".panel-body").append('<div class="alert alert-danger" role="alert">Критов НЕТ!</div>');
+	  }else{
+		$(".panel-body").append('<div class="alert alert-success" role="alert">Криты есть, Press X to win!</div>');
+	  }
+	  
+	  if ((tags.indexOf("Damage") == -1)&&(tags.indexOf("SpellDamage") == -1)){
+	  	$(".panel-body").append('<div class="alert alert-danger" role="alert">Play Passive!</div>');
+	  }
+	  
+	  if (tags.indexOf("Health") == -1){
+	  	$(".panel-body").append('<div class="alert alert-danger" role="alert">Без апгрейдов HP!</div>');
+	  }
+	  
+	  if ((tags.indexOf("Mana") == -1)&&(tags.indexOf("ManaRegen") == -1)){
+	  	$(".panel-body").append('<div class="alert alert-danger" role="alert">Манапроблемы!</div>');
+	  }
+	  
+	  if (tags.indexOf("CooldownReduction") == -1){
+	  	$(".panel-body").append('<div class="alert alert-danger" role="alert">Базовый CooldownReduction!</div>');
+		}
+
+	  if ((tags.indexOf("SpellBlock") == -1)&&(tags.indexOf("Armor") == -1)){
+	  	$(".panel-body").append('<div class="alert alert-danger" role="alert">Glass Cannon!</div>');
+	}
+
+		
+	});
+});
+</script>
+<div class="center">
+	<div class="panel panel-default">
+		<div class="panel-heading"><h3>Ultimate Bravery BT Edition</h3></div>
+		<div class="panel-body">
+			<p>Итемы можно собирать в любом порядке, один лишний.</p>
+			<div class = "images"></div>
+			<br>
+			<div class = "names"></div>
+			<br>
+		</div>
+	</div>
+</div>
+</body>
