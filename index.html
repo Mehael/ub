@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html> 
+<!DOCTYPE html> 
 <head>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
 <!-- Latest compiled and minified CSS -->
@@ -18,17 +18,20 @@ body {
 <script>
 $(document).ready(function(){
 	//Загрузить таблицу предметов
-	$.getJSON( "https://global.api.pvp.net/api/lol/static-data/ru/v1.2/item?itemListData=all&api_key=faad7945-0d54-4715-add1-3ee909b5be7b", function( database ) {
+	$.getJSON( "https://global.api.pvp.net/api/lol/static-data/ru/v1.2/item?itemListData=into,depth,hideFromAll,requiredChampion,image,tags,maps&api_key=faad7945-0d54-4715-add1-3ee909b5be7b", function( database ) {
 	  
 	  var clientVersion = database["version"];
 	  var items = [];
+	  var names = []
 	  var boots =[];
 	  
 	  $.each(database["data"], function( itemId, itemInfo ){  
 		//Запомним только итемы 3 уровня для SummonersRift, без ограничения на героя
-		if ((itemInfo["depth"] > 1)&&!("into" in itemInfo)&&(itemInfo["maps"]["11"] == true)&&!("requiredChampion" in itemInfo)&&(!("hideFromAll" in itemInfo)||(itemInfo["group"] == "JungleItems"))){
+		if ((itemInfo["depth"] > 1)&&!("into" in itemInfo)&&(itemInfo["name"].slice(-1) != ")")&&(itemInfo["group"] != "FlaskGroup")&&(itemInfo["maps"]["11"] == true)&&!("requiredChampion" in itemInfo)&&(!("hideFromAll" in itemInfo)||(itemInfo["group"] == "JungleItems"))&&!(itemInfo["name"] in names)){
 			items.push(itemId);
-			//$(".names").append(itemInfo["name"] + '<br>');
+			names.push(itemInfo["name"])
+			//$(".images").append('<img src="http://ddragon.leagueoflegends.com/cdn/'+ clientVersion + '/img/item/' + database["data"][itemId]["image"]["full"] + '">');
+			//$(".names").append(database["data"][itemId]["name"] + '<br>');
 		} else {			
 			if (("group" in itemInfo)&&(itemInfo["group"].substring(0, 5) == "Boots")&&(itemInfo["depth"] == 2)){
 				boots.push(itemId);
@@ -40,6 +43,8 @@ $(document).ready(function(){
 	  var AlreadyUsedGroups = [];
 	  var ChosenItems = [];
 	  var tags = [];
+	  
+	  document.getElementById("i").innerHTML = "";
 	  
 	  //Выберем рандомные предметы
 	  do {
@@ -114,7 +119,7 @@ $(document).ready(function(){
 		<div class="panel-heading"><h3>Ultimate Bravery BT Edition</h3></div>
 		<div class="panel-body">
 			<p>Итемы можно собирать в любом порядке, один лишний.</p>
-			<div class = "images"></div>
+			<div class = "images" id="i"><img src="http://preloaders.net/preloaders/39/%D0%92%D0%BE%D1%80%D0%BE%D0%BD%D0%BA%D0%B0.gif"></div>
 			<br>
 			<div class = "names"></div>
 			<br>
