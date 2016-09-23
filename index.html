@@ -12,6 +12,9 @@ body {
   margin-top: 20px;
   background-image: linear-gradient(90deg, #4F364C, #2f202d);
 }
+.new {
+  display: none;
+}
 </style>
 </head>
 <body>
@@ -28,10 +31,22 @@ $(document).ready(function(){
 	  $.each(database["data"], function( itemId, itemInfo ){  
 		//Запомним только итемы 3 уровня для SummonersRift, без ограничения на героя
 		if ((itemInfo["depth"] > 1)&&!("into" in itemInfo)&&(itemInfo["name"].slice(-1) != ")")&&(itemInfo["group"] != "FlaskGroup")&&(itemInfo["maps"]["11"] == true)&&!("requiredChampion" in itemInfo)&&(!("hideFromAll" in itemInfo)||(itemInfo["group"] == "JungleItems"))&&!(itemInfo["name"] in names)){
-			items.push(itemId);
-			names.push(itemInfo["name"])
-			//$(".images").append('<img src="http://ddragon.leagueoflegends.com/cdn/'+ clientVersion + '/img/item/' + database["data"][itemId]["image"]["full"] + '">');
-			//$(".names").append(database["data"][itemId]["name"] + '<br>');
+			
+			var isValid = 1
+			if (itemInfo["tags"]){
+			  for (var i = 0; i < itemInfo["tags"].length; i++) {
+				  if ((itemInfo["tags"][i] == "GoldBase")||(itemInfo["tags"][i] == "GoldPer")||(itemInfo["tags"][i] == "Vision")){
+				    isValid = 0
+				  }
+			  }	
+			}
+			
+			if (isValid == 1) {
+			  items.push(itemId);
+			  names.push(itemInfo["name"])
+			  //$(".images").append('<img src="http://ddragon.leagueoflegends.com/cdn/'+ clientVersion + '/img/item/' + database["data"][itemId]["image"]["full"] + '">');
+			  //$(".names").append(database["data"][itemId]["name"] + itemInfo["tags"] + '<br>');
+		    }
 		} else {			
 			if (("group" in itemInfo)&&(itemInfo["group"].substring(0, 5) == "Boots")&&(itemInfo["depth"] == 2)){
 				boots.push(itemId);
@@ -46,7 +61,9 @@ $(document).ready(function(){
 	  
 	  document.getElementById("i").innerHTML = "";
 	  
+	  
 	  //Выберем рандомные предметы
+	  var id = 0
 	  do {
 	  	var chosenItemId = items[Math.floor(Math.random()*items.length)];
 		var isGoodItem = false;
@@ -68,9 +85,16 @@ $(document).ready(function(){
 		}
 		
 		if (isGoodItem){
-			ChosenItems.push(chosenItemId);
-		  $(".images").append('<img src="http://ddragon.leagueoflegends.com/cdn/'+ clientVersion + '/img/item/' + database["data"][chosenItemId]["image"]["full"] + '">');
-		  $(".names").append(database["data"][chosenItemId]["name"] + '<br>');
+		  ChosenItems.push(chosenItemId);
+		  $(".images").append('<img id="'+ id +'" class="new" src="http://ddragon.leagueoflegends.com/cdn/'+ clientVersion + '/img/item/' + database["data"][chosenItemId]["image"]["full"] + '">');
+		  $('#'+(id)).show('fast');
+		  id = id+1
+		  
+		  
+		  $(".names").append('<p id="'+ id +'" class="new">'+database["data"][chosenItemId]["name"] + '</p>');
+		  $('#'+(id)).show(Math.floor(Math.random()*500)+200, 'swing');
+		  id = id+1
+		  
 
 			if ("tags" in database["data"][chosenItemId])
 			for (var i = 0; i < database["data"][chosenItemId]["tags"].length; i++) {
@@ -78,12 +102,12 @@ $(document).ready(function(){
 			}
 		  
 		}
-	  } while (ChosenItems.length < 7)
+	  } while (ChosenItems.length < 7)	
 	  
 	for (var i = 0; i < tags.length; i++) {
 		console.log(tags[i]);
 	}
-	  
+	
 	  if (tags.indexOf("CriticalStrike") == -1){
 		$(".panel-body").append('<div class="alert alert-danger" role="alert">Критов НЕТ!</div>');
 	  }else{
@@ -109,14 +133,13 @@ $(document).ready(function(){
 	  if ((tags.indexOf("SpellBlock") == -1)&&(tags.indexOf("Armor") == -1)){
 	  	$(".panel-body").append('<div class="alert alert-danger" role="alert">Glass Cannon!</div>');
 	}
-
-		
+	
 	});
 });
 </script>
 <div class="center">
 	<div class="panel panel-default">
-		<div class="panel-heading"><h3>Ultimate Bravery BT Edition</h3></div>
+		<div class="panel-heading"><h3>Ultimate Bravery: BT Edition</h3></div>
 		<div class="panel-body">
 			<p>Итемы можно собирать в любом порядке, один лишний.</p>
 			<div class = "images" id="i"><img src="http://preloaders.net/preloaders/39/%D0%92%D0%BE%D1%80%D0%BE%D0%BD%D0%BA%D0%B0.gif"></div>
