@@ -30,9 +30,7 @@ $(document).ready(function(){
 	  
 	  $.each(database["data"], function( itemId, itemInfo ){  
 		if (("tags" in itemInfo)&&!(itemInfo["tags"].indexOf("Boots") == -1)&&(itemInfo["depth"] == 2)){
-				boots.push(itemId);
-				$(".names").append(itemId);
-		
+				boots.push(itemId);	
 		
 		} else {			
             if ((itemInfo["depth"] > 1)&&!("into" in itemInfo)&&(itemInfo["name"].slice(-1) != ")")&&(itemInfo["group"] != "FlaskGroup")&&(itemInfo["maps"]["11"] == true)&&!("requiredChampion" in itemInfo)&&(!("hideFromAll" in itemInfo)||(itemInfo["group"] == "JungleItems"))&&!(itemInfo["name"] in names)){
@@ -74,7 +72,6 @@ $(document).ready(function(){
 		if (ChosenItems.length == 0)
 			chosenItemId = boots[Math.floor(Math.random()*boots.length)];
 		
-		$(".names").append(chosenItemId);
 		if (ChosenItems.indexOf(chosenItemId) == -1){
 		  
 		  if (!("group" in database["data"][chosenItemId])){
