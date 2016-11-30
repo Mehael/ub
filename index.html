@@ -29,27 +29,29 @@ $(document).ready(function(){
 	  var boots =[];
 	  
 	  $.each(database["data"], function( itemId, itemInfo ){  
-		//Запомним только итемы 3 уровня для SummonersRift, без ограничения на героя
-		if ((itemInfo["depth"] > 1)&&!("into" in itemInfo)&&(itemInfo["name"].slice(-1) != ")")&&(itemInfo["group"] != "FlaskGroup")&&(itemInfo["maps"]["11"] == true)&&!("requiredChampion" in itemInfo)&&(!("hideFromAll" in itemInfo)||(itemInfo["group"] == "JungleItems"))&&!(itemInfo["name"] in names)){
+		if (("tags" in itemInfo)&&!(itemInfo["tags"].indexOf("Boots") == -1)&&(itemInfo["depth"] == 2)){
+				boots.push(itemId);
+				$(".names").append(itemId);
+		
+		
+		} else {			
+            if ((itemInfo["depth"] > 1)&&!("into" in itemInfo)&&(itemInfo["name"].slice(-1) != ")")&&(itemInfo["group"] != "FlaskGroup")&&(itemInfo["maps"]["11"] == true)&&!("requiredChampion" in itemInfo)&&(!("hideFromAll" in itemInfo)||(itemInfo["group"] == "JungleItems"))&&!(itemInfo["name"] in names)){
 			
-			var isValid = 1
-			if (itemInfo["tags"]){
-			  for (var i = 0; i < itemInfo["tags"].length; i++) {
+				var isValid = 1
+				if (itemInfo["tags"]){
+			  	for (var i = 0; i < itemInfo["tags"].length; i++) {
 				  if ((itemInfo["tags"][i] == "GoldBase")||(itemInfo["tags"][i] == "GoldPer")||(itemInfo["tags"][i] == "Vision")){
 				    isValid = 0
 				  }
-			  }	
-			}
+			  	}	
+				}
 			
-			if (isValid == 1) {
-			  items.push(itemId);
-			  names.push(itemInfo["name"])
-			  //$(".images").append('<img src="http://ddragon.leagueoflegends.com/cdn/'+ clientVersion + '/img/item/' + database["data"][itemId]["image"]["full"] + '">');
-			  //$(".names").append(database["data"][itemId]["name"] + itemInfo["tags"] + '<br>');
-		    }
-		} else {			
-			if (("group" in itemInfo)&&(itemInfo["group"].substring(0, 5) == "Boots")&&(itemInfo["depth"] == 2)){
-				boots.push(itemId);
+				if (isValid == 1) {
+			  		items.push(itemId);
+			  		names.push(itemInfo["name"])
+			  		//$(".images").append('<img src="http://ddragon.leagueoflegends.com/cdn/'+ clientVersion + '/img/item/' + database["data"][itemId]["image"]["full"] + '">');
+			  		//$(".names").append(database["data"][itemId]["name"] + itemInfo["tags"] + '<br>');
+		    	}
 			}
 		}
 	});
@@ -72,7 +74,9 @@ $(document).ready(function(){
 		if (ChosenItems.length == 0)
 			chosenItemId = boots[Math.floor(Math.random()*boots.length)];
 		
+		$(".names").append(chosenItemId);
 		if (ChosenItems.indexOf(chosenItemId) == -1){
+		  
 		  if (!("group" in database["data"][chosenItemId])){
 			isGoodItem = true;
 		  }else{
@@ -103,38 +107,8 @@ $(document).ready(function(){
 		  
 		}
 	  } while (ChosenItems.length < 7)	
-	  
-	for (var i = 0; i < tags.length; i++) {
-		console.log(tags[i]);
-	}
 	
-	  if (tags.indexOf("CriticalStrike") == -1){
-		$(".panel-body").append('<div class="alert alert-danger" role="alert">Критов НЕТ!</div>');
-	  }else{
-		$(".panel-body").append('<div class="alert alert-success" role="alert">Криты есть, Press X to win!</div>');
-	  }
-	  
-	  if ((tags.indexOf("Damage") == -1)&&(tags.indexOf("SpellDamage") == -1)){
-	  	$(".panel-body").append('<div class="alert alert-danger" role="alert">Play Passive!</div>');
-	  }
-	  
-	  if (tags.indexOf("Health") == -1){
-	  	$(".panel-body").append('<div class="alert alert-danger" role="alert">Без апгрейдов HP!</div>');
-	  }
-	  
-	  if ((tags.indexOf("Mana") == -1)&&(tags.indexOf("ManaRegen") == -1)){
-	  	$(".panel-body").append('<div class="alert alert-danger" role="alert">Манапроблемы!</div>');
-	  }
-	  
-	  if (tags.indexOf("CooldownReduction") == -1){
-	  	$(".panel-body").append('<div class="alert alert-danger" role="alert">Базовый CooldownReduction!</div>');
-		}
-
-	  if ((tags.indexOf("SpellBlock") == -1)&&(tags.indexOf("Armor") == -1)){
-	  	$(".panel-body").append('<div class="alert alert-danger" role="alert">Glass Cannon!</div>');
-	}
-	
-	});
+	});  
 });
 </script>
 <div class="center">
