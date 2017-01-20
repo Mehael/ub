@@ -1,5 +1,6 @@
 <!DOCTYPE html> 
 <head>
+<meta charset="utf-8" />
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
 <!-- Latest compiled and minified CSS -->
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
@@ -28,13 +29,15 @@ $(document).ready(function(){
 	  var names = []
 	  var boots =[];
 	  
+	  var banned_items = ["Вестник Зика", "Клятва рыцаря", "Знамя власти", "Искупление", "Кинжал браконьера", "Праведная слава", "Горнило Микаэля", "Омрекер", "Зелье охотника", "Медальон Железных Солари", "Пылающая кадильница", "Вредоносное зелье"]
+	  
 	  $.each(database["data"], function( itemId, itemInfo ){  
 		if (("tags" in itemInfo)&&!(itemInfo["tags"].indexOf("Boots") == -1)&&(itemInfo["depth"] == 2)){
 				boots.push(itemId);	
 		
 		} else {			
             if ((itemInfo["depth"] > 1)&&!("into" in itemInfo)&&(itemInfo["name"].slice(-1) != ")")&&(itemInfo["group"] != "FlaskGroup")&&(itemInfo["maps"]["11"] == true)&&!("requiredChampion" in itemInfo)&&(!("hideFromAll" in itemInfo)||(itemInfo["group"] == "JungleItems"))&&!(itemInfo["name"] in names)){
-			
+			    			
 				var isValid = 1
 				if (itemInfo["tags"]){
 			  	for (var i = 0; i < itemInfo["tags"].length; i++) {
@@ -42,6 +45,12 @@ $(document).ready(function(){
 				    isValid = 0
 				  }
 			  	}	
+				}
+				
+				for (var i = 0; i<banned_items.length; i++){
+				    if (banned_items[i] == itemInfo["name"]){
+					   isValid = 0
+					}
 				}
 			
 				if (isValid == 1) {
@@ -112,7 +121,7 @@ $(document).ready(function(){
 	<div class="panel panel-default">
 		<div class="panel-heading"><h3>Ultimate Bravery: BT Edition</h3></div>
 		<div class="panel-body">
-			<p>Итемы можно собирать в любом порядке, один лишний.</p>
+			<p>Выкинь один итем. Cобирайся в любом порядке.</p>
 			<div class = "images" id="i"><img src="http://preloaders.net/preloaders/39/%D0%92%D0%BE%D1%80%D0%BE%D0%BD%D0%BA%D0%B0.gif"></div>
 			<br>
                         <a href="javascript:location.reload(true)" class="btn btn-info btn-lg">
