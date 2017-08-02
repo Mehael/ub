@@ -1,4 +1,4 @@
-<!DOCTYPE html> 
+﻿<!DOCTYPE html> 
 <head>
 <meta charset="utf-8" />
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
@@ -58,7 +58,7 @@ function process(){
         var APIVersion = versions[0];
        
         //Загружаем таблицу предметов
-        $.getJSON( "http://ddragon.leagueoflegends.com/cdn/"+APIVersion+"/data/ru_RU/item.json", function( database ) {
+        $.getJSON( "https://ddragon.leagueoflegends.com/cdn/"+APIVersion+"/data/ru_RU/item.json", function( database ) {
             var items = [];
             var names = []
             var boots =[];
